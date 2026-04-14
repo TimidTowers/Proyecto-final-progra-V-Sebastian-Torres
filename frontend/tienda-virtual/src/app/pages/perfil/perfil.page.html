@@ -1,0 +1,79 @@
+<ion-header [translucent]="true">
+  <ion-toolbar color="primary">
+    <ion-buttons slot="start">
+      <ion-menu-button></ion-menu-button>
+    </ion-buttons>
+    <ion-title>Mi perfil</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content [fullscreen]="true" class="ion-padding">
+  <ion-card *ngIf="auth.usuario">
+    <ion-card-header>
+      <ion-item lines="none" style="--padding-start: 0;">
+        <ion-avatar slot="start" style="width: 64px; height: 64px;">
+          <ion-icon name="person-circle" style="font-size: 64px;"></ion-icon>
+        </ion-avatar>
+        <ion-label>
+          <ion-card-title>{{ auth.usuario.nombre }}</ion-card-title>
+          <ion-card-subtitle>{{ auth.usuario.email }}</ion-card-subtitle>
+          <ion-badge color="primary">{{ auth.usuario.rol }}</ion-badge>
+        </ion-label>
+      </ion-item>
+    </ion-card-header>
+    <ion-card-content>
+      <ion-button expand="block" fill="outline" (click)="logout()">
+        <ion-icon slot="start" name="log-out"></ion-icon>
+        Cerrar sesión
+      </ion-button>
+    </ion-card-content>
+  </ion-card>
+
+  <ion-card>
+    <ion-card-header>
+      <ion-card-title>Tabs rápidos</ion-card-title>
+    </ion-card-header>
+    <ion-card-content>
+      <ion-tabs>
+        <ion-tab-bar slot="top">
+          <ion-tab-button (click)="mostrarMapa = false">
+            <ion-icon name="receipt"></ion-icon>
+            <ion-label>Pedidos</ion-label>
+          </ion-tab-button>
+          <ion-tab-button (click)="mostrarMapa = true">
+            <ion-icon name="map"></ion-icon>
+            <ion-label>Ubicación</ion-label>
+          </ion-tab-button>
+        </ion-tab-bar>
+      </ion-tabs>
+
+      <div *ngIf="!mostrarMapa">
+        <ion-list>
+          <ion-item *ngFor="let p of ultimosPedidos">
+            <ion-icon slot="start" name="cube"></ion-icon>
+            <ion-label>
+              <h3>Pedido #{{ p.pedidoId }}</h3>
+              <p>{{ p.fecha | date:'short' }} - {{ p.estado }}</p>
+            </ion-label>
+            <ion-label slot="end">&#8353;{{ p.total | number:'1.0-0' }}</ion-label>
+          </ion-item>
+          <ion-item *ngIf="ultimosPedidos.length === 0">
+            <ion-label>No hay pedidos aún</ion-label>
+          </ion-item>
+        </ion-list>
+      </div>
+
+      <div *ngIf="mostrarMapa">
+        <iframe
+          title="mapa"
+          width="100%"
+          height="260"
+          style="border:0;"
+          loading="lazy"
+          src="https://maps.google.com/maps?q=San%20Jos%C3%A9%20Costa%20Rica&t=&z=13&ie=UTF8&iwloc=&output=embed">
+        </iframe>
+        <p class="ion-text-center">Ubicación de la tienda</p>
+      </div>
+    </ion-card-content>
+  </ion-card>
+</ion-content>

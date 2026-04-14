@@ -1,0 +1,21 @@
+.resena-prompt {
+  background: var(--ion-color-warning-tint, #fff8e1);
+  border-radius: 10px;
+  padding: 12px;
+
+  .resena-prompt-text {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 0.9rem;
+    font-weight: 600;
+    margin: 0 0 8px;
+    color: var(--ion-color-dark);
+  }
+
+  .resena-btns {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+  }
+}
