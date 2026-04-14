@@ -1,0 +1,233 @@
+// ============ CATEGORÍAS ============
+.chips-categorias {
+  display: flex;
+  overflow-x: auto;
+  padding: 8px 12px;
+  gap: 6px;
+
+  ion-chip {
+    flex-shrink: 0;
+    white-space: nowrap;
+    max-width: none;
+
+    ion-label {
+      overflow: visible;
+      text-overflow: unset;
+      white-space: nowrap;
+      font-size: 0.85rem;
+    }
+  }
+}
+
+// ============ PRECIOS Y STOCK ============
+.precio {
+  font-size: 1.3rem;
+  font-weight: 700;
+  color: var(--ion-color-primary);
+  margin: 8px 0 4px 0;
+}
+
+.stock {
+  font-size: 0.85rem;
+  margin: 0;
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.stock.disponible { color: var(--ion-color-success); }
+.stock.agotado { color: var(--ion-color-danger); }
+
+// ============ SUGERENCIAS ============
+.sugerencias {
+  position: absolute;
+  left: 16px;
+  right: 16px;
+  top: 52px;
+  z-index: 20;
+  background: var(--ion-background-color);
+  border-radius: 8px;
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  max-height: 240px;
+  overflow-y: auto;
+}
+
+// ============ VISTA GRID ============
+.grid-productos {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+  gap: 12px;
+  padding: 12px;
+  justify-items: center;
+
+  .producto-card {
+    margin: 0;
+    width: 100%;
+    max-width: 320px;
+    display: flex;
+    flex-direction: column;
+
+    .img-container {
+      width: 100%;
+      aspect-ratio: 1 / 1;
+      overflow: hidden;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: var(--ion-color-light);
+
+      img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+      }
+    }
+
+    ion-card-header {
+      padding: 10px 12px 4px;
+
+      ion-card-title {
+        font-size: 1rem;
+        line-height: 1.3;
+      }
+    }
+
+    ion-card-content {
+      padding: 0 12px 8px;
+      flex: 1;
+    }
+  }
+}
+
+// ============ VISTA LISTA ============
+.list-productos {
+  padding: 8px 12px;
+
+  .producto-card-list {
+    margin: 0 0 8px 0;
+
+    .list-item-content {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      padding: 8px;
+    }
+
+    .list-img-container {
+      width: 90px;
+      height: 90px;
+      flex-shrink: 0;
+      overflow: hidden;
+      border-radius: 8px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: var(--ion-color-light);
+
+      img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+      }
+    }
+
+    .list-info {
+      flex: 1;
+      min-width: 0;
+
+      ion-card-subtitle {
+        font-size: 0.75rem;
+        margin-bottom: 2px;
+      }
+
+      ion-card-title {
+        font-size: 0.95rem;
+        line-height: 1.3;
+        display: -webkit-box;
+        -webkit-line-clamp: 2;
+        -webkit-box-orient: vertical;
+        overflow: hidden;
+      }
+
+      .precio {
+        font-size: 1.1rem;
+        margin: 4px 0 2px;
+      }
+
+      .stock {
+        font-size: 0.8rem;
+      }
+    }
+
+    .list-actions {
+      flex-shrink: 0;
+
+      ion-button {
+        --padding-start: 8px;
+        --padding-end: 8px;
+        font-size: 1.4rem;
+      }
+    }
+  }
+}
+
+// ============ RESPONSIVE ============
+
+// Móvil pequeño
+@media (max-width: 375px) {
+  .grid-productos {
+    grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+    gap: 8px;
+    padding: 8px;
+  }
+
+  .chips-categorias ion-chip ion-label {
+    font-size: 0.78rem;
+  }
+
+  .list-productos .producto-card-list .list-img-container {
+    width: 70px;
+    height: 70px;
+  }
+}
+
+// Tablet
+@media (min-width: 768px) {
+  .grid-productos {
+    grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+    gap: 16px;
+    padding: 16px;
+  }
+
+  .list-productos .producto-card-list {
+    .list-img-container {
+      width: 110px;
+      height: 110px;
+    }
+
+    .list-info ion-card-title {
+      font-size: 1.05rem;
+    }
+  }
+}
+
+// Desktop
+@media (min-width: 1024px) {
+  .grid-productos {
+    grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+    max-width: 1400px;
+    margin: 0 auto;
+  }
+
+  .list-productos {
+    max-width: 900px;
+    margin: 0 auto;
+  }
+}
+
+// Ultra-wide
+@media (min-width: 1440px) {
+  .grid-productos {
+    grid-template-columns: repeat(5, 1fr);
+  }
+}

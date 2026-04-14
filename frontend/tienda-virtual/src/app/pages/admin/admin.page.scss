@@ -1,0 +1,342 @@
+.chart-container {
+  position: relative;
+  height: 280px;
+  width: 100%;
+
+  &.small {
+    height: 220px;
+  }
+}
+
+.kpi-card {
+  border-radius: 14px;
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.08);
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+
+  &:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 8px 22px rgba(0, 0, 0, 0.15);
+  }
+
+  .kpi-label {
+    font-size: 12px;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    opacity: 0.75;
+    margin-bottom: 6px;
+  }
+
+  .kpi-value {
+    font-size: 24px;
+    font-weight: 700;
+  }
+
+  &.kpi-primary { background: linear-gradient(135deg, #2d63e2, #4d84f5); color: white; }
+  &.kpi-success { background: linear-gradient(135deg, #18b37c, #38d194); color: white; }
+  &.kpi-warning { background: linear-gradient(135deg, #f0a500, #f5b935); color: white; }
+  &.kpi-info    { background: linear-gradient(135deg, #20c3d4, #48d7e6); color: white; }
+  &.kpi-danger  { background: linear-gradient(135deg, #e26767, #ff8686); color: white; }
+}
+
+.acciones {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin-top: 12px;
+}
+
+.stock-bajo {
+  color: var(--ion-color-danger);
+  font-weight: bold;
+}
+
+.fade-in {
+  animation: fadeIn 0.35s ease-out;
+}
+
+@keyframes fadeIn {
+  from { opacity: 0; transform: translateY(8px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.form-card {
+  border: 2px solid var(--ion-color-primary);
+  border-radius: 14px;
+  background: var(--ion-card-background, #fff);
+  animation: fadeIn 0.3s ease-out;
+
+  ion-item {
+    --padding-start: 0;
+    margin-bottom: 4px;
+  }
+}
+
+// ============ INVENTARIO REDISEÑADO ============
+.inventario-section {
+
+  .alerta-card {
+    .alertas-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+      gap: 8px;
+      margin-bottom: 12px;
+
+      .alerta-item {
+        background: rgba(0,0,0,0.06);
+        border-radius: 8px;
+        padding: 8px 12px;
+        display: flex;
+        flex-direction: column;
+
+        .alerta-detalle {
+          font-size: 0.8rem;
+          opacity: 0.85;
+          margin-top: 2px;
+        }
+      }
+    }
+  }
+
+  .inv-tabs {
+    margin-bottom: 12px;
+  }
+
+  .inv-toolbar-card {
+    ion-card-content {
+      padding-bottom: 8px;
+    }
+
+    .inv-actions-row {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+      align-items: flex-end;
+      margin-top: 8px;
+    }
+
+    .motivo-item {
+      flex: 1 1 200px;
+      --padding-start: 0;
+      min-width: 200px;
+    }
+  }
+
+  .inv-table-wrapper {
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+  }
+
+  .inv-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 0.9rem;
+
+    th, td {
+      padding: 8px 10px;
+      text-align: left;
+      border-bottom: 1px solid var(--ion-color-light-shade, #ddd);
+      vertical-align: middle;
+    }
+
+    thead th {
+      background: var(--ion-color-light, #f4f4f4);
+      font-weight: 600;
+      font-size: 0.82rem;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      position: sticky;
+      top: 0;
+      z-index: 2;
+    }
+
+    .col-check { width: 40px; text-align: center; }
+    .col-cat   { min-width: 100px; }
+    .col-num   { width: 70px; text-align: center; }
+    .col-cant  { width: 100px; }
+    .col-acc   { width: 60px; text-align: center; }
+
+    .row-selected {
+      background: rgba(var(--ion-color-primary-rgb), 0.06);
+    }
+
+    .row-danger td {
+      background: rgba(var(--ion-color-danger-rgb), 0.04);
+    }
+
+    .texto-peligro {
+      color: var(--ion-color-danger);
+      font-weight: 700;
+    }
+
+    .badge-estado {
+      font-size: 0.72rem;
+      padding: 2px 8px;
+    }
+
+    .input-cantidad {
+      --padding-start: 6px;
+      --padding-end: 4px;
+      border: 1px solid var(--ion-color-light-shade, #ccc);
+      border-radius: 6px;
+      max-width: 80px;
+      font-size: 0.9rem;
+      text-align: center;
+    }
+  }
+
+  .inv-pagination {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    padding: 12px 0 4px;
+
+    .pag-info {
+      font-size: 0.85rem;
+      color: var(--ion-color-medium);
+    }
+  }
+
+  // Historial
+  .filtro-hist-item {
+    --padding-start: 0;
+    max-width: 360px;
+  }
+
+  .usuario-mov {
+    font-size: 0.8rem;
+    color: var(--ion-color-medium);
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    margin-top: 2px;
+  }
+}
+
+// ============ IMAGENES SECTION ============
+.imagenes-section {
+  .img-card {
+    border-radius: 14px;
+    overflow: hidden;
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+
+    &:hover {
+      transform: translateY(-3px);
+      box-shadow: 0 8px 22px rgba(0, 0, 0, 0.12);
+    }
+
+    .img-preview-container {
+      position: relative;
+      width: 100%;
+      height: 180px;
+      overflow: hidden;
+      background: var(--ion-color-light, #f4f4f4);
+
+      .img-preview {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+      }
+
+      .img-cat-badge {
+        position: absolute;
+        top: 8px;
+        right: 8px;
+        font-size: 0.7rem;
+      }
+    }
+
+    ion-card-header {
+      padding-bottom: 4px;
+    }
+
+    .img-card-title {
+      font-size: 0.95rem;
+      font-weight: 700;
+    }
+
+    .img-url-display {
+      font-size: 0.75rem;
+      color: var(--ion-color-medium);
+      word-break: break-all;
+      margin-bottom: 8px;
+      min-height: 18px;
+    }
+
+    .img-url-input {
+      --padding-start: 0;
+      margin-bottom: 8px;
+    }
+
+    .img-edit-actions {
+      display: flex;
+      gap: 6px;
+      margin-top: 4px;
+    }
+  }
+}
+
+// ============ RESPONSIVE ============
+@media (max-width: 768px) {
+  .inventario-section {
+    .inv-table {
+      font-size: 0.82rem;
+
+      th, td { padding: 6px 6px; }
+      .col-cat { display: none; }
+    }
+
+    .inv-actions-row {
+      flex-direction: column;
+
+      ion-button { width: 100%; }
+    }
+  }
+}
+
+// ============ RESEÑAS ADMIN ============
+.resena-admin-card {
+  margin-bottom: 12px;
+
+  .resena-admin-estrellas {
+    display: flex;
+    gap: 1px;
+    margin-bottom: 6px;
+    font-size: 16px;
+  }
+
+  h4 {
+    font-weight: 700;
+    margin: 4px 0;
+  }
+
+  .motivo-rechazo {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    font-size: 0.85rem;
+    color: var(--ion-color-danger);
+    margin-top: 6px;
+  }
+}
+
+.resena-admin-fotos {
+  display: flex;
+  gap: 6px;
+  flex-wrap: wrap;
+  margin: 8px 0;
+}
+
+.resena-admin-foto {
+  width: 64px;
+  height: 64px;
+  object-fit: cover;
+  border-radius: 6px;
+}
+
+.resena-admin-acciones {
+  display: flex;
+  gap: 6px;
+  flex-wrap: wrap;
+  margin-top: 8px;
+}

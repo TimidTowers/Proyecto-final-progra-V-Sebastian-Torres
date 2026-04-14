@@ -1,0 +1,95 @@
+.mapa-container {
+  width: 100%;
+  height: 320px;
+  border-radius: 12px;
+  margin: 14px 0 10px;
+  overflow: hidden;
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.1);
+  z-index: 0;
+}
+
+.mapa-acciones {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  flex-wrap: wrap;
+  margin-bottom: 10px;
+}
+
+.datos-tarjeta {
+  background: var(--ion-color-light);
+  border-radius: 10px;
+  padding: 4px 0;
+}
+
+.cupon-block {
+  margin-top: 14px;
+  padding: 12px;
+  background: linear-gradient(135deg, rgba(155, 89, 182, 0.08), rgba(45, 99, 226, 0.08));
+  border-radius: 10px;
+  border: 1px dashed rgba(155, 89, 182, 0.4);
+}
+
+.cupon-aplicado {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  margin-top: 8px;
+  color: var(--ion-color-success);
+  font-weight: 500;
+}
+
+.cupon-error {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  margin-top: 8px;
+  color: var(--ion-color-danger);
+  font-weight: 500;
+}
+
+.totales {
+  margin-top: 14px;
+  padding: 12px 4px;
+  border-top: 1px solid var(--ion-color-light-shade);
+
+  .linea {
+    display: flex;
+    justify-content: space-between;
+    padding: 6px 4px;
+    font-size: 14px;
+
+    small {
+      opacity: 0.7;
+      font-size: 11px;
+    }
+
+    &.descuento {
+      color: var(--ion-color-success);
+    }
+
+    &.total {
+      margin-top: 6px;
+      padding-top: 10px;
+      border-top: 2px solid var(--ion-color-primary);
+      font-size: 18px;
+    }
+
+    .gratis {
+      color: var(--ion-color-success);
+      font-weight: bold;
+      text-transform: uppercase;
+    }
+  }
+}
+
+.total-ck {
+  font-size: 20px;
+  color: var(--ion-color-primary);
+}
+
+/* Hacer el popup de Leaflet consistente con el tema */
+:host ::ng-deep .leaflet-popup-content-wrapper {
+  border-radius: 10px;
+}

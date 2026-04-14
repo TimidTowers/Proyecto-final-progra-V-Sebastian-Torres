@@ -1,0 +1,769 @@
+<ion-header [translucent]="true">
+  <ion-toolbar color="primary">
+    <ion-buttons slot="start">
+      <ion-menu-button></ion-menu-button>
+    </ion-buttons>
+    <ion-title>Panel administrativo</ion-title>
+  </ion-toolbar>
+  <ion-toolbar>
+    <ion-segment [(ngModel)]="seccion" (ionChange)="cambiarSeccion(seccion)" scrollable="true">
+      <ion-segment-button value="dashboard">
+        <ion-icon name="analytics"></ion-icon>
+        <ion-label>Dashboard</ion-label>
+      </ion-segment-button>
+      <ion-segment-button value="productos">
+        <ion-icon name="cube"></ion-icon>
+        <ion-label>Productos</ion-label>
+      </ion-segment-button>
+      <ion-segment-button value="categorias">
+        <ion-icon name="pricetags"></ion-icon>
+        <ion-label>Categorías</ion-label>
+      </ion-segment-button>
+      <ion-segment-button value="cupones">
+        <ion-icon name="ticket"></ion-icon>
+        <ion-label>Cupones</ion-label>
+      </ion-segment-button>
+      <ion-segment-button value="inventario">
+        <ion-icon name="file-tray-stacked"></ion-icon>
+        <ion-label>Inventario</ion-label>
+      </ion-segment-button>
+      <ion-segment-button value="imagenes">
+        <ion-icon name="images"></ion-icon>
+        <ion-label>Imagenes</ion-label>
+      </ion-segment-button>
+      <ion-segment-button value="resenas">
+        <ion-icon name="star"></ion-icon>
+        <ion-label>Reseñas</ion-label>
+      </ion-segment-button>
+      <ion-segment-button value="facturas">
+        <ion-icon name="receipt"></ion-icon>
+        <ion-label>Facturas</ion-label>
+      </ion-segment-button>
+    </ion-segment>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content [fullscreen]="true">
+
+  <!-- ============ DASHBOARD ============ -->
+  <div *ngIf="seccion === 'dashboard'" class="ion-padding fade-in">
+    <ion-card>
+      <ion-card-header>
+        <ion-card-title>Filtros del dashboard</ion-card-title>
+      </ion-card-header>
+      <ion-card-content>
+        <ion-grid>
+          <ion-row>
+            <ion-col size="12" size-md="3">
+              <ion-item>
+                <ion-label position="stacked">Desde</ion-label>
+                <ion-input type="date" [(ngModel)]="filtros.desde"></ion-input>
+              </ion-item>
+            </ion-col>
+            <ion-col size="12" size-md="3">
+              <ion-item>
+                <ion-label position="stacked">Hasta</ion-label>
+                <ion-input type="date" [(ngModel)]="filtros.hasta"></ion-input>
+              </ion-item>
+            </ion-col>
+            <ion-col size="12" size-md="3">
+              <ion-item>
+                <ion-label position="stacked">Categoría</ion-label>
+                <ion-select [(ngModel)]="filtros.categoriaId">
+                  <ion-select-option [value]="undefined">Todas</ion-select-option>
+                  <ion-select-option *ngFor="let c of categorias" [value]="c.categoriaId">{{ c.nombre }}</ion-select-option>
+                </ion-select>
+              </ion-item>
+            </ion-col>
+            <ion-col size="12" size-md="3">
+              <ion-item>
+                <ion-label position="stacked">Método pago</ion-label>
+                <ion-select [(ngModel)]="filtros.metodoPago">
+                  <ion-select-option [value]="undefined">Todos</ion-select-option>
+                  <ion-select-option value="Tarjeta">Tarjeta</ion-select-option>
+                  <ion-select-option value="Efectivo">Efectivo</ion-select-option>
+                  <ion-select-option value="Transferencia">Transferencia</ion-select-option>
+                </ion-select>
+              </ion-item>
+            </ion-col>
+          </ion-row>
+        </ion-grid>
+        <div class="acciones">
+          <ion-button size="small" (click)="cargarDashboard()">
+            <ion-icon slot="start" name="funnel"></ion-icon> Aplicar
+          </ion-button>
+          <ion-button size="small" fill="outline" (click)="limpiarFiltros()">
+            <ion-icon slot="start" name="refresh"></ion-icon> Limpiar
+          </ion-button>
+          <ion-button size="small" fill="outline" color="success" (click)="exportarDashboardExcel()">
+            <ion-icon slot="start" name="download"></ion-icon> Excel
+          </ion-button>
+        </div>
+      </ion-card-content>
+    </ion-card>
+
+    <div *ngIf="dashboard">
+      <ion-grid>
+        <ion-row>
+          <ion-col size="12" size-md="4" size-lg="2">
+            <ion-card class="kpi-card kpi-primary">
+              <ion-card-content>
+                <div class="kpi-label">Total vendido</div>
+                <div class="kpi-value">&#8353;{{ dashboard.totalVendido | number:'1.0-0' }}</div>
+              </ion-card-content>
+            </ion-card>
+          </ion-col>
+          <ion-col size="12" size-md="4" size-lg="2">
+            <ion-card class="kpi-card kpi-success">
+              <ion-card-content>
+                <div class="kpi-label">Pedidos</div>
+                <div class="kpi-value">{{ dashboard.cantidadPedidos }}</div>
+              </ion-card-content>
+            </ion-card>
+          </ion-col>
+          <ion-col size="12" size-md="4" size-lg="2">
+            <ion-card class="kpi-card kpi-warning">
+              <ion-card-content>
+                <div class="kpi-label">Ticket promedio</div>
+                <div class="kpi-value">&#8353;{{ dashboard.ticketPromedio | number:'1.0-0' }}</div>
+              </ion-card-content>
+            </ion-card>
+          </ion-col>
+          <ion-col size="12" size-md="4" size-lg="2">
+            <ion-card class="kpi-card kpi-info">
+              <ion-card-content>
+                <div class="kpi-label">Clientes activos</div>
+                <div class="kpi-value">{{ dashboard.clientesActivos }}</div>
+              </ion-card-content>
+            </ion-card>
+          </ion-col>
+          <ion-col size="12" size-md="4" size-lg="2">
+            <ion-card class="kpi-card kpi-danger">
+              <ion-card-content>
+                <div class="kpi-label">Stock bajo</div>
+                <div class="kpi-value">{{ dashboard.productosStockBajo }}</div>
+              </ion-card-content>
+            </ion-card>
+          </ion-col>
+        </ion-row>
+
+        <ion-row>
+          <ion-col size="12" size-lg="8">
+            <ion-card>
+              <ion-card-header>
+                <ion-card-title>Ventas por día</ion-card-title>
+              </ion-card-header>
+              <ion-card-content>
+                <div class="chart-container">
+                  <canvas baseChart [type]="'line'" [data]="ventasChart" [options]="ventasChartOptions"></canvas>
+                </div>
+              </ion-card-content>
+            </ion-card>
+          </ion-col>
+          <ion-col size="12" size-lg="4">
+            <ion-card>
+              <ion-card-header>
+                <ion-card-title>Métodos de pago</ion-card-title>
+              </ion-card-header>
+              <ion-card-content>
+                <div class="chart-container small">
+                  <canvas baseChart [type]="'pie'" [data]="metodosChart" [options]="metodosChartOptions"></canvas>
+                </div>
+              </ion-card-content>
+            </ion-card>
+          </ion-col>
+        </ion-row>
+
+        <ion-row>
+          <ion-col size="12" size-lg="6">
+            <ion-card>
+              <ion-card-header>
+                <ion-card-title>Top productos</ion-card-title>
+              </ion-card-header>
+              <ion-card-content>
+                <div class="chart-container">
+                  <canvas baseChart [type]="'bar'" [data]="productosChart" [options]="productosChartOptions"></canvas>
+                </div>
+              </ion-card-content>
+            </ion-card>
+          </ion-col>
+          <ion-col size="12" size-lg="6">
+            <ion-card>
+              <ion-card-header>
+                <ion-card-title>Top categorías</ion-card-title>
+              </ion-card-header>
+              <ion-card-content>
+                <div class="chart-container">
+                  <canvas baseChart [type]="'doughnut'" [data]="categoriasChart" [options]="categoriasChartOptions"></canvas>
+                </div>
+              </ion-card-content>
+            </ion-card>
+          </ion-col>
+        </ion-row>
+      </ion-grid>
+    </div>
+
+    <div *ngIf="!dashboard && cargando" class="ion-text-center ion-padding">
+      <ion-spinner></ion-spinner>
+    </div>
+  </div>
+
+  <!-- ============ PRODUCTOS ============ -->
+  <div *ngIf="seccion === 'productos'" class="fade-in">
+
+    <!-- Formulario modal de producto -->
+    <ion-card *ngIf="mostrarFormProducto" class="form-card ion-margin">
+      <ion-card-header>
+        <ion-card-title>{{ productoEditando ? 'Editar producto' : 'Nuevo producto' }}</ion-card-title>
+      </ion-card-header>
+      <ion-card-content>
+        <ion-item>
+          <ion-label position="stacked">Nombre *</ion-label>
+          <ion-input [(ngModel)]="formProducto.nombre" placeholder="Nombre del producto"></ion-input>
+        </ion-item>
+        <ion-item>
+          <ion-label position="stacked">Descripción</ion-label>
+          <ion-textarea [(ngModel)]="formProducto.descripcion" placeholder="Descripción" rows="2"></ion-textarea>
+        </ion-item>
+        <ion-item>
+          <ion-label position="stacked">Precio (₡) *</ion-label>
+          <ion-input type="number" [(ngModel)]="formProducto.precio" placeholder="0"></ion-input>
+        </ion-item>
+        <ion-item>
+          <ion-label position="stacked">Stock inicial</ion-label>
+          <ion-input type="number" [(ngModel)]="formProducto.stock" placeholder="0"></ion-input>
+        </ion-item>
+        <ion-item>
+          <ion-label position="stacked">Stock mínimo</ion-label>
+          <ion-input type="number" [(ngModel)]="formProducto.stockMinimo" placeholder="5"></ion-input>
+        </ion-item>
+        <ion-item>
+          <ion-label position="stacked">URL imagen</ion-label>
+          <ion-input [(ngModel)]="formProducto.imagenUrl" placeholder="https://..."></ion-input>
+        </ion-item>
+        <ion-item>
+          <ion-label position="stacked">Categoría *</ion-label>
+          <ion-select [(ngModel)]="formProducto.categoriaId" interface="popover" placeholder="Seleccionar categoría">
+            <ion-select-option *ngFor="let c of categorias" [value]="c.categoriaId">{{ c.nombre }}</ion-select-option>
+          </ion-select>
+        </ion-item>
+        <div class="ion-padding-top ion-text-end">
+          <ion-button fill="outline" color="medium" (click)="cerrarFormProducto()">Cancelar</ion-button>
+          <ion-button (click)="guardarProducto()">
+            <ion-icon slot="start" [name]="productoEditando ? 'save' : 'add-circle'"></ion-icon>
+            {{ productoEditando ? 'Guardar' : 'Crear' }}
+          </ion-button>
+        </div>
+      </ion-card-content>
+    </ion-card>
+
+    <ion-list>
+      <ion-item *ngFor="let p of productos" lines="full">
+        <ion-thumbnail slot="start">
+          <img [src]="p.imagenUrl || 'https://via.placeholder.com/60'" alt="{{p.nombre}}"/>
+        </ion-thumbnail>
+        <ion-label>
+          <h3>{{ p.nombre }}</h3>
+          <p>{{ p.categoriaNombre }} · Stock: <strong [class.stock-bajo]="p.stockBajo">{{ p.stock }}</strong>
+            <span *ngIf="p.stockMinimo"> (mín: {{ p.stockMinimo }})</span>
+          </p>
+          <p>&#8353;{{ p.precio | number:'1.0-0' }}</p>
+        </ion-label>
+        <ion-badge *ngIf="p.stockBajo" color="danger" slot="end">¡Stock bajo!</ion-badge>
+        <ion-button slot="end" fill="clear" (click)="abrirFormProducto(p)">
+          <ion-icon slot="icon-only" name="create"></ion-icon>
+        </ion-button>
+        <ion-button slot="end" fill="clear" color="danger" (click)="eliminar(p)">
+          <ion-icon slot="icon-only" name="trash"></ion-icon>
+        </ion-button>
+      </ion-item>
+    </ion-list>
+    <ion-fab slot="fixed" vertical="bottom" horizontal="end">
+      <ion-fab-button (click)="abrirFormProducto()">
+        <ion-icon name="add"></ion-icon>
+      </ion-fab-button>
+    </ion-fab>
+  </div>
+
+  <!-- ============ CATEGORÍAS ============ -->
+  <div *ngIf="seccion === 'categorias'" class="ion-padding fade-in">
+    <ion-button expand="block" (click)="nuevaCategoria(null)">
+      <ion-icon slot="start" name="add-circle"></ion-icon>
+      Nueva categoría raíz
+    </ion-button>
+
+    <ion-list>
+      <ng-container *ngFor="let c of arbolCategorias">
+        <ion-item lines="full">
+          <ion-icon slot="start" [name]="c.icono || 'folder'"></ion-icon>
+          <ion-label>
+            <h3>{{ c.nombre }}</h3>
+            <p>{{ c.descripcion }}</p>
+          </ion-label>
+          <ion-button slot="end" fill="clear" (click)="nuevaCategoria(c.categoriaId)">
+            <ion-icon slot="icon-only" name="add"></ion-icon>
+          </ion-button>
+          <ion-button slot="end" fill="clear" color="danger" (click)="eliminarCategoria(c)">
+            <ion-icon slot="icon-only" name="trash"></ion-icon>
+          </ion-button>
+        </ion-item>
+        <ion-item *ngFor="let sub of c.subcategorias" lines="full" class="ion-padding-start">
+          <ion-icon slot="start" [name]="sub.icono || 'folder-open'"></ion-icon>
+          <ion-label>
+            <h4>↳ {{ sub.nombre }}</h4>
+            <p>{{ sub.descripcion }}</p>
+          </ion-label>
+          <ion-button slot="end" fill="clear" color="danger" (click)="eliminarCategoria(sub)">
+            <ion-icon slot="icon-only" name="trash"></ion-icon>
+          </ion-button>
+        </ion-item>
+      </ng-container>
+    </ion-list>
+  </div>
+
+  <!-- ============ CUPONES ============ -->
+  <div *ngIf="seccion === 'cupones'" class="ion-padding fade-in">
+    <ion-button expand="block" (click)="nuevoCupon()">
+      <ion-icon slot="start" name="add-circle"></ion-icon>
+      Nuevo cupón
+    </ion-button>
+
+    <ion-list>
+      <ion-item *ngFor="let c of cupones" lines="full">
+        <ion-icon slot="start" name="ticket"></ion-icon>
+        <ion-label>
+          <h3><strong>{{ c.codigo }}</strong></h3>
+          <p>{{ c.descripcion }}</p>
+          <p>
+            <ion-badge color="tertiary">{{ c.tipo }}</ion-badge>
+            {{ c.tipo === 'Porcentaje' ? (c.valor + '%') : ('₡' + (c.valor | number:'1.0-0')) }}
+            · Mín: ₡{{ c.montoMinimo | number:'1.0-0' }}
+          </p>
+          <p>Válido: {{ c.fechaInicio | date:'dd/MM/yy' }} - {{ c.fechaFin | date:'dd/MM/yy' }}</p>
+          <p *ngIf="c.limiteUso > 0">Usos: {{ c.usosActuales }} / {{ c.limiteUso }}</p>
+        </ion-label>
+        <ion-badge slot="end" [color]="c.activo ? 'success' : 'medium'">
+          {{ c.activo ? 'Activo' : 'Inactivo' }}
+        </ion-badge>
+        <ion-button slot="end" fill="clear" (click)="toggleCupon(c)">
+          <ion-icon slot="icon-only" [name]="c.activo ? 'pause' : 'play'"></ion-icon>
+        </ion-button>
+        <ion-button slot="end" fill="clear" color="danger" (click)="eliminarCupon(c)">
+          <ion-icon slot="icon-only" name="trash"></ion-icon>
+        </ion-button>
+      </ion-item>
+    </ion-list>
+  </div>
+
+  <!-- ============ INVENTARIO ============ -->
+  <div *ngIf="seccion === 'inventario'" class="ion-padding fade-in inventario-section">
+
+    <!-- Alertas de stock bajo -->
+    <ion-card *ngIf="alertas.length > 0" color="warning" class="alerta-card">
+      <ion-card-header>
+        <ion-card-title>
+          <ion-icon name="alert-circle"></ion-icon>
+          Alertas de stock bajo ({{ alertas.length }})
+        </ion-card-title>
+      </ion-card-header>
+      <ion-card-content>
+        <div class="alertas-grid">
+          <div *ngFor="let a of alertas" class="alerta-item">
+            <strong>{{ a.nombre }}</strong>
+            <span class="alerta-detalle">{{ a.categoriaNombre }} · {{ a.stock }}/{{ a.stockMinimo }}</span>
+          </div>
+        </div>
+        <ion-button expand="block" size="small" fill="outline" color="dark" (click)="notificarStockBajo()">
+          <ion-icon slot="start" name="mail"></ion-icon>
+          Notificar por correo
+        </ion-button>
+      </ion-card-content>
+    </ion-card>
+
+    <!-- Tabs: Reabastecer / Historial -->
+    <ion-segment [(ngModel)]="inventarioTab" class="inv-tabs">
+      <ion-segment-button value="reabastecer">
+        <ion-icon name="cube"></ion-icon>
+        <ion-label>Reabastecer</ion-label>
+      </ion-segment-button>
+      <ion-segment-button value="historial">
+        <ion-icon name="time"></ion-icon>
+        <ion-label>Historial</ion-label>
+      </ion-segment-button>
+    </ion-segment>
+
+    <!-- TAB: REABASTECER -->
+    <div *ngIf="inventarioTab === 'reabastecer'">
+
+      <!-- Buscador y acciones -->
+      <ion-card class="inv-toolbar-card">
+        <ion-card-content>
+          <ion-searchbar
+            [(ngModel)]="inventarioBusqueda"
+            placeholder="Buscar producto por nombre o categoria..."
+            (ionInput)="filtrarInventario()"
+            debounce="200">
+          </ion-searchbar>
+
+          <div class="inv-actions-row">
+            <ion-item lines="none" class="motivo-item">
+              <ion-label position="stacked">Motivo global (opcional)</ion-label>
+              <ion-input [(ngModel)]="inventarioMotivo" placeholder="Ej: Compra a proveedor"></ion-input>
+            </ion-item>
+          </div>
+
+          <div class="inv-actions-row">
+            <ion-button size="small" (click)="reabastecerMasivo()" [disabled]="inventarioSeleccionados.size === 0">
+              <ion-icon slot="start" name="checkmark-done"></ion-icon>
+              Reabastecer seleccionados ({{ inventarioSeleccionados.size }})
+            </ion-button>
+            <ion-button size="small" fill="outline" color="danger" (click)="accionResetearTodo()">
+              <ion-icon slot="start" name="refresh"></ion-icon>
+              Todo a cero
+            </ion-button>
+            <ion-button size="small" fill="outline" color="tertiary" (click)="accionResetearMinimo()">
+              <ion-icon slot="start" name="trending-up"></ion-icon>
+              Al stock minimo
+            </ion-button>
+          </div>
+        </ion-card-content>
+      </ion-card>
+
+      <!-- Tabla de productos -->
+      <ion-card>
+        <ion-card-content class="inv-table-wrapper">
+          <div *ngIf="inventarioCargando" class="ion-text-center ion-padding">
+            <ion-spinner name="crescent"></ion-spinner>
+          </div>
+
+          <div *ngIf="!inventarioCargando && inventarioFiltrados.length === 0" class="ion-text-center ion-padding">
+            <p>No se encontraron productos.</p>
+          </div>
+
+          <table *ngIf="!inventarioCargando && inventarioFiltrados.length > 0" class="inv-table">
+            <thead>
+              <tr>
+                <th class="col-check">
+                  <ion-checkbox [checked]="invTodoSeleccionado" (ionChange)="invToggleTodo()"></ion-checkbox>
+                </th>
+                <th>Producto</th>
+                <th class="col-cat">Categoria</th>
+                <th class="col-num">Stock</th>
+                <th class="col-num">Minimo</th>
+                <th class="col-num">Estado</th>
+                <th class="col-cant">Cantidad</th>
+                <th class="col-acc">Accion</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr *ngFor="let p of inventarioPaginado"
+                  [class.row-selected]="invEstaSeleccionado(p.productoId)"
+                  [class.row-danger]="p.stockBajo">
+                <td class="col-check">
+                  <ion-checkbox [checked]="invEstaSeleccionado(p.productoId)"
+                                (ionChange)="invToggleSeleccion(p.productoId)"></ion-checkbox>
+                </td>
+                <td>
+                  <strong>{{ p.nombre }}</strong>
+                </td>
+                <td class="col-cat">{{ p.categoriaNombre }}</td>
+                <td class="col-num">
+                  <span [class.texto-peligro]="p.stockBajo">{{ p.stock }}</span>
+                </td>
+                <td class="col-num">{{ p.stockMinimo }}</td>
+                <td class="col-num">
+                  <ion-badge [color]="p.stockBajo ? 'danger' : 'success'" class="badge-estado">
+                    {{ p.stockBajo ? 'Bajo' : 'OK' }}
+                  </ion-badge>
+                </td>
+                <td class="col-cant">
+                  <ion-input type="number" min="0"
+                    [value]="invGetCantidad(p.productoId)"
+                    (ionInput)="invSetCantidad(p.productoId, $event.detail.value)"
+                    placeholder="0"
+                    class="input-cantidad">
+                  </ion-input>
+                </td>
+                <td class="col-acc">
+                  <ion-button size="small" fill="clear" color="success"
+                    (click)="reabastecerIndividual(p)"
+                    [disabled]="invGetCantidad(p.productoId) <= 0">
+                    <ion-icon slot="icon-only" name="add-circle"></ion-icon>
+                  </ion-button>
+                </td>
+              </tr>
+            </tbody>
+          </table>
+
+          <!-- Paginacion -->
+          <div *ngIf="inventarioFiltrados.length > inventarioPageSize" class="inv-pagination">
+            <ion-button fill="clear" size="small" (click)="inventarioPaginaAnterior()" [disabled]="inventarioPagina <= 1">
+              <ion-icon slot="icon-only" name="chevron-back"></ion-icon>
+            </ion-button>
+            <span class="pag-info">
+              Pagina {{ inventarioPagina }} de {{ inventarioTotalPaginas }}
+              ({{ inventarioFiltrados.length }} productos)
+            </span>
+            <ion-button fill="clear" size="small" (click)="inventarioPaginaSiguiente()" [disabled]="inventarioPagina >= inventarioTotalPaginas">
+              <ion-icon slot="icon-only" name="chevron-forward"></ion-icon>
+            </ion-button>
+          </div>
+        </ion-card-content>
+      </ion-card>
+    </div>
+
+    <!-- TAB: HISTORIAL -->
+    <div *ngIf="inventarioTab === 'historial'">
+      <div class="acciones ion-margin-vertical">
+        <ion-button fill="outline" color="success" size="small" (click)="exportarMovimientosExcel()">
+          <ion-icon slot="start" name="download"></ion-icon>
+          Exportar Excel
+        </ion-button>
+        <ion-item lines="none" class="filtro-hist-item">
+          <ion-label>Filtrar por producto:</ion-label>
+          <ion-select [(ngModel)]="filtroProductoId" interface="popover" placeholder="Todos"
+                      (ionChange)="cargarInventario()">
+            <ion-select-option [value]="null">Todos</ion-select-option>
+            <ion-select-option *ngFor="let p of inventarioProductos" [value]="p.productoId">
+              {{ p.nombre }}
+            </ion-select-option>
+          </ion-select>
+        </ion-item>
+      </div>
+
+      <ion-card>
+        <ion-card-header>
+          <ion-card-title>Historial de movimientos ({{ movimientos.length }})</ion-card-title>
+        </ion-card-header>
+        <ion-card-content>
+          <ion-list>
+            <ion-item *ngFor="let m of movimientos" lines="full">
+              <ion-icon slot="start"
+                [name]="m.tipo === 'Entrada' ? 'arrow-down-circle' : (m.tipo === 'Salida' ? 'arrow-up-circle' : 'sync-circle')"
+                [color]="m.tipo === 'Entrada' ? 'success' : (m.tipo === 'Salida' ? 'danger' : 'warning')">
+              </ion-icon>
+              <ion-label>
+                <h3>{{ m.nombreProducto }}</h3>
+                <p><strong>{{ m.tipo }}</strong> · {{ m.cantidad }} unidades</p>
+                <p>{{ m.stockAnterior }} &rarr; {{ m.stockNuevo }} · {{ m.fecha | date:'short' }}</p>
+                <p *ngIf="m.motivo"><em>{{ m.motivo }}</em></p>
+                <p *ngIf="m.usuarioNombre" class="usuario-mov">
+                  <ion-icon name="person-circle-outline"></ion-icon> {{ m.usuarioNombre }}
+                </p>
+              </ion-label>
+            </ion-item>
+          </ion-list>
+          <div *ngIf="movimientos.length === 0" class="ion-text-center ion-padding">
+            <p>Sin movimientos registrados.</p>
+          </div>
+        </ion-card-content>
+      </ion-card>
+    </div>
+  </div>
+
+  <!-- ============ IMAGENES ============ -->
+  <div *ngIf="seccion === 'imagenes'" class="ion-padding fade-in imagenes-section">
+    <ion-card>
+      <ion-card-header>
+        <ion-card-title>
+          <ion-icon name="images"></ion-icon>
+          Gestion de imagenes de productos
+        </ion-card-title>
+        <ion-card-subtitle>Revisa, aprueba y cambia las imagenes de cada producto</ion-card-subtitle>
+      </ion-card-header>
+      <ion-card-content>
+        <ion-searchbar
+          [(ngModel)]="imagenesBusqueda"
+          placeholder="Buscar por nombre o categoria..."
+          (ionInput)="filtrarImagenes()"
+          debounce="200">
+        </ion-searchbar>
+      </ion-card-content>
+    </ion-card>
+
+    <div *ngIf="imagenCargando" class="ion-text-center ion-padding">
+      <ion-spinner name="crescent"></ion-spinner>
+    </div>
+
+    <div *ngIf="!imagenCargando && imagenesFiltrados.length === 0" class="ion-text-center ion-padding">
+      <p>No se encontraron productos.</p>
+    </div>
+
+    <ion-grid *ngIf="!imagenCargando && imagenesFiltrados.length > 0">
+      <ion-row>
+        <ion-col size="12" size-sm="6" size-md="4" size-lg="3" *ngFor="let p of imagenesFiltrados">
+          <ion-card class="img-card">
+            <div class="img-preview-container">
+              <img [src]="imagenEditandoId === p.productoId && imagenNuevaUrl ? imagenNuevaUrl : (p.imagenUrl || 'https://via.placeholder.com/300x200?text=Sin+imagen')"
+                   (error)="imagenError($event)"
+                   [alt]="p.nombre"
+                   class="img-preview"/>
+              <ion-badge class="img-cat-badge" color="tertiary">{{ p.categoriaNombre }}</ion-badge>
+            </div>
+            <ion-card-header>
+              <ion-card-title class="img-card-title">{{ p.nombre }}</ion-card-title>
+              <ion-card-subtitle>ID: {{ p.productoId }} · Stock: {{ p.stock }}</ion-card-subtitle>
+            </ion-card-header>
+            <ion-card-content>
+              <!-- Modo visualizacion -->
+              <div *ngIf="imagenEditandoId !== p.productoId">
+                <p class="img-url-display">{{ p.imagenUrl ? (p.imagenUrl.length > 50 ? (p.imagenUrl.substring(0, 50) + '...') : p.imagenUrl) : 'Sin URL' }}</p>
+                <ion-button expand="block" size="small" fill="outline" (click)="editarImagen(p)">
+                  <ion-icon slot="start" name="create"></ion-icon>
+                  Cambiar imagen
+                </ion-button>
+              </div>
+
+              <!-- Modo edicion -->
+              <div *ngIf="imagenEditandoId === p.productoId">
+                <ion-item lines="none" class="img-url-input">
+                  <ion-label position="stacked">Nueva URL de imagen</ion-label>
+                  <ion-input [(ngModel)]="imagenNuevaUrl" placeholder="https://..." type="url"></ion-input>
+                </ion-item>
+                <div class="img-edit-actions">
+                  <ion-button size="small" color="success" (click)="guardarImagen(p)">
+                    <ion-icon slot="start" name="checkmark"></ion-icon>
+                    Guardar
+                  </ion-button>
+                  <ion-button size="small" fill="outline" color="medium" (click)="cancelarEdicionImagen()">
+                    Cancelar
+                  </ion-button>
+                </div>
+              </div>
+            </ion-card-content>
+          </ion-card>
+        </ion-col>
+      </ion-row>
+    </ion-grid>
+  </div>
+
+  <!-- ============ FACTURAS ============ -->
+  <!-- ============ RESEÑAS MODERACIÓN ============ -->
+  <div *ngIf="seccion === 'resenas'" class="ion-padding fade-in">
+    <div class="acciones ion-margin-vertical">
+      <ion-select [(ngModel)]="resenasEstadoFiltro" placeholder="Filtrar por estado" (ionChange)="filtrarResenasAdmin()" interface="popover">
+        <ion-select-option value="">Todas</ion-select-option>
+        <ion-select-option value="Aprobada">Aprobadas</ion-select-option>
+        <ion-select-option value="Pendiente">Pendientes</ion-select-option>
+        <ion-select-option value="Reportada">Reportadas</ion-select-option>
+        <ion-select-option value="Rechazada">Rechazadas</ion-select-option>
+      </ion-select>
+    </div>
+
+    <!-- Resumen global -->
+    <ion-card *ngIf="resenasResumen">
+      <ion-card-content>
+        <ion-grid>
+          <ion-row class="ion-text-center">
+            <ion-col><strong>{{ resenasResumen.totalResenas }}</strong><br><small>Total aprobadas</small></ion-col>
+            <ion-col><strong>{{ resenasResumen.promedioCalificacion | number:'1.1-1' }}</strong> <ion-icon name="star" color="warning"></ion-icon><br><small>Promedio</small></ion-col>
+            <ion-col><strong>{{ resenasTotal }}</strong><br><small>En filtro actual</small></ion-col>
+          </ion-row>
+        </ion-grid>
+      </ion-card-content>
+    </ion-card>
+
+    <div *ngIf="resenasCargando" class="ion-padding ion-text-center">
+      <ion-spinner name="crescent"></ion-spinner>
+    </div>
+
+    <div *ngIf="!resenasCargando && resenasAdmin.length === 0" class="ion-padding ion-text-center">
+      <ion-icon name="chatbubbles-outline" style="font-size: 48px; color: var(--ion-color-medium);"></ion-icon>
+      <p>No hay reseñas en esta categoría.</p>
+    </div>
+
+    <ion-card *ngFor="let r of resenasAdmin" class="resena-admin-card">
+      <ion-card-header>
+        <ion-item lines="none" style="--padding-start: 0;">
+          <ion-label>
+            <h3>
+              <strong>{{ r.nombreUsuario }}</strong> sobre <strong>{{ r.nombreProducto }}</strong>
+            </h3>
+            <p>{{ r.fechaCreacion | date:'dd/MM/yyyy HH:mm' }}</p>
+          </ion-label>
+          <ion-badge slot="end" [color]="colorResenaEstado(r.estado)">{{ r.estado }}</ion-badge>
+        </ion-item>
+      </ion-card-header>
+      <ion-card-content>
+        <div class="resena-admin-estrellas">
+          <ion-icon *ngFor="let s of getEstrellasArr(r.calificacion)" name="star" color="warning"></ion-icon>
+          <ion-icon *ngFor="let s of getEstrellasVaciasArr(r.calificacion)" name="star-outline" color="warning"></ion-icon>
+        </div>
+        <h4>{{ r.titulo }}</h4>
+        <p *ngIf="r.descripcion">{{ r.descripcion }}</p>
+        <p *ngIf="r.motivoRechazo" class="motivo-rechazo">
+          <ion-icon name="alert-circle" color="danger"></ion-icon>
+          Motivo rechazo: {{ r.motivoRechazo }}
+        </p>
+
+        <!-- Fotos -->
+        <div *ngIf="r.fotos.length > 0" class="resena-admin-fotos">
+          <img *ngFor="let f of r.fotos"
+               [src]="'data:' + f.contentType + ';base64,' + f.imagenBase64"
+               class="resena-admin-foto"/>
+        </div>
+
+        <!-- Acciones de moderación -->
+        <div class="resena-admin-acciones">
+          <ion-button *ngIf="r.estado !== 'Aprobada'" size="small" color="success" fill="outline" (click)="moderarResena(r, 'Aprobada')">
+            <ion-icon slot="start" name="checkmark-circle"></ion-icon> Aprobar
+          </ion-button>
+          <ion-button *ngIf="r.estado !== 'Rechazada'" size="small" color="warning" fill="outline" (click)="moderarResena(r, 'Rechazada')">
+            <ion-icon slot="start" name="close-circle"></ion-icon> Rechazar
+          </ion-button>
+          <ion-button size="small" color="danger" fill="outline" (click)="eliminarResenaAdmin(r)">
+            <ion-icon slot="start" name="trash"></ion-icon> Eliminar
+          </ion-button>
+        </div>
+      </ion-card-content>
+    </ion-card>
+
+    <!-- Paginación -->
+    <div *ngIf="resenasTotalPaginas > 1" class="ion-text-center ion-margin-top">
+      <ion-button fill="clear" [disabled]="resenasPagina <= 1" (click)="resenasPaginaAnterior()">
+        <ion-icon name="chevron-back"></ion-icon>
+      </ion-button>
+      <span>{{ resenasPagina }} / {{ resenasTotalPaginas }}</span>
+      <ion-button fill="clear" [disabled]="resenasPagina >= resenasTotalPaginas" (click)="resenasPaginaSiguiente()">
+        <ion-icon name="chevron-forward"></ion-icon>
+      </ion-button>
+    </div>
+  </div>
+
+  <div *ngIf="seccion === 'facturas'" class="ion-padding fade-in">
+    <div class="acciones ion-margin-vertical">
+      <ion-button fill="outline" color="success" (click)="exportarFacturasExcel()">
+        <ion-icon slot="start" name="download"></ion-icon>
+        Exportar Excel
+      </ion-button>
+    </div>
+
+    <ion-card>
+      <ion-card-header>
+        <ion-card-title>Facturas electrónicas ({{ facturas.length }})</ion-card-title>
+      </ion-card-header>
+      <ion-card-content>
+        <ion-list>
+          <ion-item *ngFor="let f of facturas" lines="full">
+            <ion-icon slot="start" name="receipt" color="primary"></ion-icon>
+            <ion-label>
+              <h3>{{ f.numeroConsecutivo }}</h3>
+              <p>{{ f.usuarioNombre }} · {{ f.fechaEmision | date:'short' }}</p>
+              <p>Base: ₡{{ f.baseImponible | number:'1.0-0' }} · IVA: ₡{{ f.iva | number:'1.0-0' }}</p>
+            </ion-label>
+            <ion-label slot="end">
+              <strong>&#8353;{{ f.total | number:'1.0-0' }}</strong>
+            </ion-label>
+            <ion-button slot="end" fill="clear" (click)="descargarFactura(f)">
+              <ion-icon slot="icon-only" name="download"></ion-icon>
+            </ion-button>
+          </ion-item>
+        </ion-list>
+        <div *ngIf="facturas.length === 0" class="ion-text-center ion-padding">
+          <p>Sin facturas emitidas.</p>
+        </div>
+      </ion-card-content>
+    </ion-card>
+  </div>
+
+</ion-content>

@@ -1,0 +1,449 @@
+<ion-header [translucent]="true">
+  <ion-toolbar color="primary">
+    <ion-buttons slot="start">
+      <ion-back-button defaultHref="/home"></ion-back-button>
+    </ion-buttons>
+    <ion-title>{{ producto?.nombre || 'Detalle' }}</ion-title>
+    <ion-buttons slot="end">
+      <ion-button routerLink="/carrito">
+        <ion-icon slot="icon-only" name="cart"></ion-icon>
+      </ion-button>
+    </ion-buttons>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content [fullscreen]="true">
+
+  <!-- Loading -->
+  <div *ngIf="cargando" class="loading-container">
+    <ion-spinner name="crescent" color="primary"></ion-spinner>
+  </div>
+
+  <!-- No encontrado -->
+  <div *ngIf="!cargando && !producto" class="not-found">
+    <ion-icon name="alert-circle-outline"></ion-icon>
+    <h3>Producto no encontrado</h3>
+    <ion-button routerLink="/home" fill="outline">Volver al catalogo</ion-button>
+  </div>
+
+  <!-- Contenido principal -->
+  <div *ngIf="producto" class="detalle-wrapper fade-in">
+    <ion-grid class="ion-no-padding">
+      <ion-row>
+
+        <!-- COLUMNA IZQUIERDA: Galeria de imagenes -->
+        <ion-col size="12" size-md="6" size-lg="7">
+          <div class="galeria-container">
+
+            <!-- Imagen principal -->
+            <div class="imagen-principal-wrapper"
+                 (click)="abrirLightbox()"
+                 (mouseenter)="onMouseEnterImg()"
+                 (mouseleave)="onMouseLeaveImg()"
+                 (mousemove)="onMouseMoveImg($event)"
+                 (touchstart)="onTouchStart($event)"
+                 (touchend)="onTouchEnd($event)">
+
+              <!-- Navegacion flechas -->
+              <button *ngIf="imagenes.length > 1"
+                      class="nav-btn nav-prev"
+                      (click)="imagenAnterior(); $event.stopPropagation()">
+                <ion-icon name="chevron-back"></ion-icon>
+              </button>
+
+              <img [src]="imagenActual.url"
+                   [alt]="imagenActual.alt"
+                   (error)="imagenError($event)"
+                   loading="lazy"
+                   class="imagen-principal"
+                   [class.zoom-cursor]="imagenes.length > 0"/>
+
+              <!-- Zoom lens overlay (solo desktop) -->
+              <div *ngIf="zoomActivo" class="zoom-overlay"
+                   [style.backgroundImage]="'url(' + imagenActual.urlLarge + ')'"
+                   [style.backgroundPosition]="zoomX + '% ' + zoomY + '%'">
+              </div>
+
+              <button *ngIf="imagenes.length > 1"
+                      class="nav-btn nav-next"
+                      (click)="imagenSiguiente(); $event.stopPropagation()">
+                <ion-icon name="chevron-forward"></ion-icon>
+              </button>
+
+              <!-- Contador -->
+              <div *ngIf="imagenes.length > 1" class="image-counter">
+                {{ imagenActualIndex + 1 }} / {{ imagenes.length }}
+              </div>
+
+              <!-- Badge zoom hint -->
+              <div class="zoom-hint">
+                <ion-icon name="expand-outline"></ion-icon>
+              </div>
+            </div>
+
+            <!-- Thumbnails -->
+            <div *ngIf="imagenes.length > 1" class="thumbnails-row">
+              <div *ngFor="let img of imagenes; let i = index"
+                   class="thumbnail-item"
+                   [class.active]="i === imagenActualIndex"
+                   (click)="seleccionarImagen(i)">
+                <img [src]="img.url" [alt]="img.alt" loading="lazy" (error)="imagenError($event)"/>
+              </div>
+            </div>
+
+            <!-- Dots indicadores (mobile) -->
+            <div *ngIf="imagenes.length > 1" class="dots-row">
+              <span *ngFor="let img of imagenes; let i = index"
+                    class="dot"
+                    [class.active]="i === imagenActualIndex"
+                    (click)="seleccionarImagen(i)">
+              </span>
+            </div>
+          </div>
+        </ion-col>
+
+        <!-- COLUMNA DERECHA: Informacion del producto -->
+        <ion-col size="12" size-md="6" size-lg="5">
+          <div class="info-container">
+
+            <!-- Categoria -->
+            <ion-badge color="tertiary" class="cat-badge">{{ producto.categoriaNombre }}</ion-badge>
+
+            <!-- Nombre -->
+            <h1 class="producto-nombre">{{ producto.nombre }}</h1>
+
+            <!-- Precio -->
+            <div class="precio-container">
+              <span class="precio-valor">&#8353;{{ producto.precio | number:'1.0-0' }}</span>
+              <span class="precio-iva">IVA incluido</span>
+            </div>
+
+            <!-- Descripcion -->
+            <div class="descripcion-section">
+              <h4>Descripcion</h4>
+              <p>{{ producto.descripcion || 'Sin descripcion disponible.' }}</p>
+            </div>
+
+            <!-- Stock -->
+            <div class="stock-section">
+              <div *ngIf="producto.stock > 0" class="stock-disponible">
+                <ion-icon name="checkmark-circle" color="success"></ion-icon>
+                <span>{{ producto.stock }} en existencia</span>
+              </div>
+              <div *ngIf="producto.stock === 0" class="stock-agotado">
+                <ion-icon name="close-circle" color="danger"></ion-icon>
+                <span>Agotado</span>
+              </div>
+            </div>
+
+            <!-- Cantidad -->
+            <div class="cantidad-section" *ngIf="producto.stock > 0">
+              <label class="cantidad-label">Cantidad</label>
+              <div class="cantidad-controls">
+                <button class="cant-btn" (click)="disminuir()" [disabled]="cantidad <= 1">
+                  <ion-icon name="remove"></ion-icon>
+                </button>
+                <span class="cant-valor">{{ cantidad }}</span>
+                <button class="cant-btn" (click)="aumentar()" [disabled]="cantidad >= producto.stock">
+                  <ion-icon name="add"></ion-icon>
+                </button>
+              </div>
+            </div>
+
+            <!-- Subtotal -->
+            <div class="subtotal-section" *ngIf="producto.stock > 0">
+              <span class="subtotal-label">Subtotal:</span>
+              <span class="subtotal-valor">&#8353;{{ producto.precio * cantidad | number:'1.0-0' }}</span>
+            </div>
+
+            <!-- Botones de accion -->
+            <div class="acciones-section">
+              <ion-button expand="block" size="large" [disabled]="producto.stock === 0" (click)="agregarAlCarrito()" class="btn-carrito">
+                <ion-icon slot="start" name="cart"></ion-icon>
+                Agregar al carrito
+              </ion-button>
+              <ion-button expand="block" fill="outline" [disabled]="producto.stock === 0" (click)="comprarAhora()" class="btn-comprar">
+                <ion-icon slot="start" name="flash"></ion-icon>
+                Comprar ahora
+              </ion-button>
+            </div>
+
+            <!-- Info adicional -->
+            <div class="info-extra">
+              <div class="info-item">
+                <ion-icon name="shield-checkmark-outline" color="success"></ion-icon>
+                <span>Garantia de fabrica</span>
+              </div>
+              <div class="info-item">
+                <ion-icon name="car-outline" color="primary"></ion-icon>
+                <span>Envio a todo Costa Rica</span>
+              </div>
+              <div class="info-item">
+                <ion-icon name="card-outline" color="tertiary"></ion-icon>
+                <span>Pago seguro</span>
+              </div>
+            </div>
+          </div>
+        </ion-col>
+      </ion-row>
+    </ion-grid>
+
+    <!-- Productos relacionados -->
+    <div *ngIf="productosRelacionados.length > 0" class="relacionados-section">
+      <h3 class="relacionados-titulo">Productos relacionados</h3>
+      <div class="relacionados-grid">
+        <ion-card *ngFor="let r of productosRelacionados" class="relacionado-card" (click)="irAProducto(r.productoId)">
+          <img [src]="r.imagenUrl || 'https://via.placeholder.com/200x150?text=Producto'"
+               [alt]="r.nombre"
+               loading="lazy"
+               (error)="imagenError($event)"
+               class="relacionado-img"/>
+          <ion-card-header>
+            <ion-card-subtitle>{{ r.categoriaNombre }}</ion-card-subtitle>
+            <ion-card-title class="relacionado-nombre">{{ r.nombre }}</ion-card-title>
+          </ion-card-header>
+          <ion-card-content>
+            <span class="relacionado-precio">&#8353;{{ r.precio | number:'1.0-0' }}</span>
+          </ion-card-content>
+        </ion-card>
+      </div>
+    </div>
+
+    <!-- ============ SECCIÓN DE RESEÑAS ============ -->
+    <div class="resenas-section">
+      <div class="resenas-header">
+        <h3>Reseñas de clientes</h3>
+        <ion-button *ngIf="auth.isAuth" fill="outline" size="small" (click)="abrirFormResena()">
+          <ion-icon slot="start" name="create"></ion-icon>
+          Escribir reseña
+        </ion-button>
+      </div>
+
+      <!-- Resumen de calificaciones -->
+      <div *ngIf="resenaResumen && resenaResumen.totalResenas > 0" class="resena-resumen">
+        <div class="resumen-promedio">
+          <span class="promedio-numero">{{ resenaResumen.promedioCalificacion | number:'1.1-1' }}</span>
+          <div class="promedio-estrellas">
+            <ion-icon *ngFor="let s of getEstrellas(resenaResumen.promedioCalificacion)" name="star" color="warning"></ion-icon>
+            <ion-icon *ngFor="let s of getEstrellasVacias(resenaResumen.promedioCalificacion)" name="star-outline" color="warning"></ion-icon>
+          </div>
+          <span class="promedio-total">{{ resenaResumen.totalResenas }} reseña{{ resenaResumen.totalResenas !== 1 ? 's' : '' }}</span>
+        </div>
+        <div class="resumen-barras">
+          <div class="barra-row" *ngFor="let n of [5,4,3,2,1]">
+            <span class="barra-label">{{ n }} <ion-icon name="star" color="warning"></ion-icon></span>
+            <div class="barra-track">
+              <div class="barra-fill" [style.width.%]="getPorcentajeEstrellas(
+                n === 5 ? resenaResumen.estrellas5 :
+                n === 4 ? resenaResumen.estrellas4 :
+                n === 3 ? resenaResumen.estrellas3 :
+                n === 2 ? resenaResumen.estrellas2 : resenaResumen.estrellas1
+              )"></div>
+            </div>
+            <span class="barra-count">{{
+              n === 5 ? resenaResumen.estrellas5 :
+              n === 4 ? resenaResumen.estrellas4 :
+              n === 3 ? resenaResumen.estrellas3 :
+              n === 2 ? resenaResumen.estrellas2 : resenaResumen.estrellas1
+            }}</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- Galería de fotos de clientes -->
+      <div *ngIf="galeriaFotosResenas.length > 0" class="galeria-fotos-clientes">
+        <h4>Fotos de clientes</h4>
+        <div class="fotos-scroll">
+          <div *ngFor="let foto of galeriaFotosResenas" class="foto-cliente-thumb">
+            <img [src]="'data:' + foto.contentType + ';base64,' + foto.base64" [alt]="'Foto de ' + foto.usuario"/>
+          </div>
+        </div>
+      </div>
+
+      <!-- Ordenar reseñas -->
+      <div *ngIf="resenaResumen && resenaResumen.totalResenas > 0" class="resenas-filtro">
+        <ion-segment [(ngModel)]="resenaOrden" (ionChange)="cambiarOrdenResenas(resenaOrden)">
+          <ion-segment-button value="recientes"><ion-label>Recientes</ion-label></ion-segment-button>
+          <ion-segment-button value="mejor"><ion-label>Mejor</ion-label></ion-segment-button>
+          <ion-segment-button value="peor"><ion-label>Menor</ion-label></ion-segment-button>
+        </ion-segment>
+      </div>
+
+      <!-- Loading -->
+      <div *ngIf="resenaCargando" class="ion-padding ion-text-center">
+        <ion-spinner name="crescent"></ion-spinner>
+      </div>
+
+      <!-- Sin reseñas -->
+      <div *ngIf="!resenaCargando && resenaResumen && resenaResumen.totalResenas === 0" class="sin-resenas">
+        <ion-icon name="chatbubbles-outline"></ion-icon>
+        <p>Aún no hay reseñas para este producto.</p>
+        <p *ngIf="auth.isAuth">¡Sé el primero en dejar tu opinión!</p>
+      </div>
+
+      <!-- Lista de reseñas -->
+      <div *ngIf="!resenaCargando" class="resenas-lista">
+        <ion-card *ngFor="let r of resenas" class="resena-card">
+          <ion-card-header>
+            <div class="resena-card-top">
+              <div class="resena-info-usuario">
+                <ion-avatar>
+                  <div class="avatar-inicial">{{ r.nombreUsuario.charAt(0).toUpperCase() }}</div>
+                </ion-avatar>
+                <div>
+                  <strong>{{ r.nombreUsuario }}</strong>
+                  <p class="resena-fecha">{{ r.fechaCreacion | date:'dd/MM/yyyy' }}</p>
+                </div>
+              </div>
+              <div class="resena-estrellas">
+                <ion-icon *ngFor="let s of getEstrellas(r.calificacion)" name="star" color="warning"></ion-icon>
+                <ion-icon *ngFor="let s of getEstrellasVacias(r.calificacion)" name="star-outline" color="warning"></ion-icon>
+              </div>
+            </div>
+          </ion-card-header>
+          <ion-card-content>
+            <h4 class="resena-titulo">{{ r.titulo }}</h4>
+            <p *ngIf="r.descripcion" class="resena-desc">{{ r.descripcion }}</p>
+
+            <!-- Fotos de la reseña -->
+            <div *ngIf="r.fotos.length > 0" class="resena-fotos">
+              <img *ngFor="let f of r.fotos"
+                   [src]="'data:' + f.contentType + ';base64,' + f.imagenBase64"
+                   class="resena-foto-img"
+                   alt="Foto de reseña"/>
+            </div>
+
+            <!-- Acciones -->
+            <div class="resena-acciones">
+              <ion-button *ngIf="auth.usuario?.usuarioId === r.usuarioId" fill="clear" size="small" (click)="editarResena(r)">
+                <ion-icon slot="start" name="create-outline"></ion-icon> Editar
+              </ion-button>
+              <ion-button *ngIf="auth.usuario?.usuarioId === r.usuarioId || auth.esAdmin" fill="clear" size="small" color="danger" (click)="confirmarEliminarResena(r)">
+                <ion-icon slot="start" name="trash-outline"></ion-icon> Eliminar
+              </ion-button>
+              <ion-button *ngIf="auth.isAuth && auth.usuario?.usuarioId !== r.usuarioId" fill="clear" size="small" color="medium" (click)="reportarResena(r)">
+                <ion-icon slot="start" name="flag-outline"></ion-icon> Reportar
+              </ion-button>
+            </div>
+          </ion-card-content>
+        </ion-card>
+      </div>
+
+      <!-- Paginación -->
+      <div *ngIf="resenaTotalPaginas > 1" class="resena-paginacion">
+        <ion-button fill="clear" [disabled]="resenaPagina <= 1" (click)="paginaResenaAnterior()">
+          <ion-icon name="chevron-back"></ion-icon>
+        </ion-button>
+        <span>{{ resenaPagina }} / {{ resenaTotalPaginas }}</span>
+        <ion-button fill="clear" [disabled]="resenaPagina >= resenaTotalPaginas" (click)="paginaResenaSiguiente()">
+          <ion-icon name="chevron-forward"></ion-icon>
+        </ion-button>
+      </div>
+    </div>
+  </div>
+
+  <!-- ============ MODAL FORMULARIO DE RESEÑA ============ -->
+  <div *ngIf="mostrarFormResena" class="resena-modal-overlay" (click)="cerrarFormResena()">
+    <div class="resena-modal" (click)="$event.stopPropagation()">
+      <div class="resena-modal-header">
+        <h3>{{ resenaEditandoId ? 'Editar reseña' : 'Escribir una reseña' }}</h3>
+        <ion-button fill="clear" (click)="cerrarFormResena()">
+          <ion-icon name="close"></ion-icon>
+        </ion-button>
+      </div>
+
+      <div class="resena-modal-body">
+        <!-- Calificación -->
+        <div class="campo-calificacion">
+          <label>Calificación</label>
+          <div class="estrellas-selector">
+            <ion-icon *ngFor="let n of [1,2,3,4,5]"
+                      [name]="n <= resenaForm.calificacion ? 'star' : 'star-outline'"
+                      color="warning"
+                      (click)="setCalificacion(n)"
+                      class="estrella-click">
+            </ion-icon>
+          </div>
+        </div>
+
+        <!-- Título -->
+        <ion-item>
+          <ion-label position="floating">Título *</ion-label>
+          <ion-input [(ngModel)]="resenaForm.titulo" maxlength="150" required></ion-input>
+        </ion-item>
+
+        <!-- Descripción -->
+        <ion-item>
+          <ion-label position="floating">Descripción (opcional)</ion-label>
+          <ion-textarea [(ngModel)]="resenaForm.descripcion" maxlength="2000" rows="4" autoGrow="true"></ion-textarea>
+        </ion-item>
+
+        <!-- Fotos -->
+        <div class="campo-fotos">
+          <label>Fotos (máx. 5)</label>
+          <div class="fotos-preview-grid">
+            <div *ngFor="let foto of resenaFotos; let i = index" class="foto-preview-item">
+              <img [src]="foto.preview" alt="Preview"/>
+              <button class="foto-remove-btn" (click)="eliminarFotoResena(i)">
+                <ion-icon name="close-circle"></ion-icon>
+              </button>
+            </div>
+            <button *ngIf="resenaFotos.length < 5" class="foto-add-btn" (click)="seleccionarFotoResena()">
+              <ion-icon name="camera"></ion-icon>
+              <span>Agregar</span>
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <div class="resena-modal-footer">
+        <ion-button fill="outline" (click)="cerrarFormResena()">Cancelar</ion-button>
+        <ion-button [disabled]="resenaEnviando || !resenaForm.titulo.trim()" (click)="enviarResena()">
+          <ion-spinner *ngIf="resenaEnviando" name="crescent"></ion-spinner>
+          <span *ngIf="!resenaEnviando">{{ resenaEditandoId ? 'Actualizar' : 'Publicar' }}</span>
+        </ion-button>
+      </div>
+    </div>
+  </div>
+
+  <!-- LIGHTBOX OVERLAY -->
+  <div *ngIf="lightboxAbierto" class="lightbox-overlay" (click)="cerrarLightbox()"
+       (touchstart)="onTouchStart($event)" (touchend)="onTouchEnd($event)">
+
+    <!-- Boton cerrar -->
+    <button class="lightbox-close" (click)="cerrarLightbox()">
+      <ion-icon name="close"></ion-icon>
+    </button>
+
+    <!-- Contador -->
+    <div class="lightbox-counter">{{ lightboxIndex + 1 }} / {{ imagenes.length }}</div>
+
+    <!-- Navegacion -->
+    <button *ngIf="imagenes.length > 1" class="lightbox-nav lightbox-prev" (click)="lightboxAnterior($event)">
+      <ion-icon name="chevron-back"></ion-icon>
+    </button>
+
+    <!-- Imagen ampliada -->
+    <div class="lightbox-img-wrapper" (click)="$event.stopPropagation()">
+      <img [src]="imagenes[lightboxIndex].urlLarge"
+           [alt]="imagenes[lightboxIndex].alt"
+           (error)="imagenError($event)"
+           class="lightbox-img"/>
+    </div>
+
+    <button *ngIf="imagenes.length > 1" class="lightbox-nav lightbox-next" (click)="lightboxSiguiente($event)">
+      <ion-icon name="chevron-forward"></ion-icon>
+    </button>
+
+    <!-- Thumbnails en lightbox -->
+    <div *ngIf="imagenes.length > 1" class="lightbox-thumbs" (click)="$event.stopPropagation()">
+      <div *ngFor="let img of imagenes; let i = index"
+           class="lightbox-thumb"
+           [class.active]="i === lightboxIndex"
+           (click)="lightboxIndex = i">
+        <img [src]="img.url" [alt]="img.alt"/>
+      </div>
+    </div>
+  </div>
+
+</ion-content>

@@ -1,0 +1,16 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(npm --version)",
+      "Bash(ionic --version)",
+      "Bash(dotnet --version)",
+      "Bash(dotnet new:*)",
+      "Bash(dotnet add:*)",
+      "Bash(dotnet build:*)",
+      "Bash(npm install:*)",
+      "Bash(ionic start:*)",
+      "Bash(npx ng:*)",
+      "Bash(npx cap:*)"
+    ]
+  }
+}

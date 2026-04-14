@@ -1,0 +1,44 @@
+<ion-header [translucent]="true">
+  <ion-toolbar color="primary">
+    <ion-buttons slot="start">
+      <ion-back-button defaultHref="/login"></ion-back-button>
+    </ion-buttons>
+    <ion-title>Crear cuenta</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content [fullscreen]="true" class="ion-padding">
+  <ion-card style="max-width: 520px; margin: 0 auto;">
+    <ion-card-header>
+      <ion-card-title>Registrarse</ion-card-title>
+      <ion-card-subtitle>Crea tu cuenta para comprar</ion-card-subtitle>
+    </ion-card-header>
+    <ion-card-content>
+      <ion-item>
+        <ion-icon slot="start" name="person"></ion-icon>
+        <ion-input label="Nombre completo" labelPlacement="floating" [(ngModel)]="nombre"></ion-input>
+      </ion-item>
+      <ion-item>
+        <ion-icon slot="start" name="mail"></ion-icon>
+        <ion-input label="Correo" labelPlacement="floating" type="email" [(ngModel)]="email"></ion-input>
+      </ion-item>
+      <ion-item>
+        <ion-icon slot="start" name="lock-closed"></ion-icon>
+        <ion-input label="Contraseña (mín 6)" labelPlacement="floating" type="password" [(ngModel)]="password"></ion-input>
+      </ion-item>
+      <ion-item>
+        <ion-icon slot="start" name="call"></ion-icon>
+        <ion-input label="Teléfono" labelPlacement="floating" [(ngModel)]="telefono"></ion-input>
+      </ion-item>
+      <ion-item>
+        <ion-icon slot="start" name="home"></ion-icon>
+        <ion-input label="Dirección" labelPlacement="floating" [(ngModel)]="direccion"></ion-input>
+      </ion-item>
+
+      <ion-button expand="block" class="ion-margin-top" (click)="registrarse()">
+        <ion-icon slot="start" name="person-add"></ion-icon>
+        Crear cuenta
+      </ion-button>
+    </ion-card-content>
+  </ion-card>
+</ion-content>

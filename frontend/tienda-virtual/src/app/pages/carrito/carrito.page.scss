@@ -1,0 +1,142 @@
+// ============ Estado vacio ============
+.empty-state {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 48px 24px;
+  text-align: center;
+  min-height: 60vh;
+
+  ion-icon {
+    font-size: 96px;
+    color: var(--ion-color-medium);
+    margin-bottom: 16px;
+  }
+
+  h3 {
+    font-size: 1.4rem;
+    font-weight: 600;
+    margin-bottom: 8px;
+  }
+
+  p {
+    color: var(--ion-color-medium);
+    margin-bottom: 24px;
+  }
+}
+
+// ============ Lista de items ============
+.cart-list {
+  padding-bottom: 220px; // espacio para el resumen fijo
+
+  .cart-item {
+    --padding-top: 12px;
+    --padding-bottom: 12px;
+    transition: background 0.2s ease;
+
+    &.seleccionado {
+      --background: rgba(var(--ion-color-tertiary-rgb), 0.08);
+    }
+
+    ion-thumbnail {
+      --size: 64px;
+      --border-radius: 10px;
+      margin-right: 12px;
+
+      img {
+        border-radius: 10px;
+        object-fit: cover;
+      }
+    }
+
+    h3 {
+      font-weight: 600;
+      font-size: 0.95rem;
+      margin-bottom: 4px;
+    }
+
+    .precio-unitario {
+      color: var(--ion-color-medium);
+      font-size: 0.82rem;
+    }
+
+    .subtotal-item {
+      font-size: 0.88rem;
+      margin-top: 2px;
+      color: var(--ion-color-primary);
+    }
+  }
+}
+
+// ============ Controles de cantidad ============
+.cantidad-controls {
+  display: flex;
+  align-items: center;
+  gap: 0;
+
+  .btn-cant {
+    --padding-start: 4px;
+    --padding-end: 4px;
+    min-height: 32px;
+  }
+
+  .cantidad-label {
+    font-size: 1.1rem;
+    font-weight: 700;
+    min-width: 28px;
+    text-align: center;
+  }
+
+  .btn-del {
+    margin-left: 8px;
+  }
+}
+
+// ============ Resumen / Footer ============
+.cart-summary {
+  position: fixed;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  z-index: 10;
+  padding: 0 8px;
+
+  ion-card {
+    border-radius: 16px 16px 0 0;
+    margin: 0;
+    box-shadow: 0 -4px 20px rgba(0, 0, 0, 0.1);
+  }
+
+  .summary-line {
+    display: flex;
+    justify-content: space-between;
+    padding: 6px 0;
+    font-size: 0.95rem;
+    color: var(--ion-color-medium-shade);
+
+    &.total-line {
+      border-top: 1px solid var(--ion-color-light);
+      padding-top: 10px;
+      margin-top: 4px;
+    }
+  }
+
+  .total-value {
+    font-size: 1.5rem;
+    font-weight: 800;
+    color: var(--ion-color-primary);
+  }
+
+  .checkout-btn {
+    margin-top: 12px;
+    --border-radius: 12px;
+    font-weight: 600;
+  }
+
+  .continue-btn {
+    margin-top: 6px;
+    --border-radius: 12px;
+    font-size: 0.85rem;
+  }
+}

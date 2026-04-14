@@ -1,0 +1,81 @@
+/*
+ * App Global CSS - Tienda Virtual
+ */
+
+/* Core CSS required for Ionic components to work properly */
+@import "@ionic/angular/css/core.css";
+
+/* Basic CSS for apps built with Ionic */
+@import "@ionic/angular/css/normalize.css";
+@import "@ionic/angular/css/structure.css";
+@import "@ionic/angular/css/typography.css";
+@import "@ionic/angular/css/display.css";
+
+/* Optional CSS utils */
+@import "@ionic/angular/css/padding.css";
+@import "@ionic/angular/css/float-elements.css";
+@import "@ionic/angular/css/text-alignment.css";
+@import "@ionic/angular/css/text-transformation.css";
+@import "@ionic/angular/css/flex-utils.css";
+
+/* Ionic dark palette (clase controlada por TemaService) */
+@import "@ionic/angular/css/palettes/dark.class.css";
+
+/* Bootstrap 5 (utilidades y grid) */
+@import "bootstrap/dist/css/bootstrap.min.css";
+
+/* Leaflet - mapas interactivos */
+@import "leaflet/dist/leaflet.css";
+
+/* =========================================
+   Temas personalizados
+   ========================================= */
+body.tema-claro {
+  --ion-background-color: #f8f9fc;
+  --ion-text-color: #1a1a1a;
+  --ion-toolbar-background: #2d63e2;
+  --ion-color-primary: #2d63e2;
+}
+
+body.tema-oscuro {
+  --ion-background-color: #121212;
+  --ion-text-color: #f0f0f0;
+  --ion-toolbar-background: #1f1f1f;
+  --ion-color-primary: #4285f4;
+}
+
+body.tema-contraste {
+  --ion-background-color: #000000;
+  --ion-text-color: #ffff00;
+  --ion-toolbar-background: #000000;
+  --ion-color-primary: #ffff00;
+}
+
+body.tema-contraste ion-card {
+  border: 2px solid #ffff00;
+}
+
+/* Badges en el menú */
+ion-menu ion-item ion-badge {
+  min-width: 22px;
+}
+
+.precio-detalle {
+  font-size: 2rem;
+  font-weight: 800;
+  color: var(--ion-color-primary);
+  margin: 8px 0;
+}
+
+.cantidad {
+  font-size: 1.2rem;
+  font-weight: 700;
+  text-align: center;
+  min-width: 36px;
+}
+
+.total-ck {
+  font-size: 1.3rem;
+  font-weight: 700;
+  color: var(--ion-color-primary);
+}

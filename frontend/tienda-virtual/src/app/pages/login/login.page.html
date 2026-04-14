@@ -1,0 +1,44 @@
+<ion-header [translucent]="true">
+  <ion-toolbar color="primary">
+    <ion-buttons slot="start">
+      <ion-menu-button></ion-menu-button>
+    </ion-buttons>
+    <ion-title>Iniciar sesión</ion-title>
+  </ion-toolbar>
+</ion-header>
+
+<ion-content [fullscreen]="true" class="ion-padding">
+  <div class="login-container">
+    <ion-icon name="storefront" class="logo"></ion-icon>
+    <h2 class="ion-text-center">Tienda Virtual</h2>
+
+    <ion-card>
+      <ion-card-content>
+        <ion-item>
+          <ion-icon slot="start" name="mail"></ion-icon>
+          <ion-input label="Correo" labelPlacement="floating"
+                     type="email" [(ngModel)]="email" placeholder="correo@ejemplo.com"></ion-input>
+        </ion-item>
+        <ion-item>
+          <ion-icon slot="start" name="lock-closed"></ion-icon>
+          <ion-input label="Contraseña" labelPlacement="floating"
+                     type="password" [(ngModel)]="password"></ion-input>
+        </ion-item>
+
+        <ion-button expand="block" class="ion-margin-top" (click)="ingresar()">
+          <ion-icon slot="start" name="log-in"></ion-icon>
+          Ingresar
+        </ion-button>
+
+        <ion-button expand="block" fill="clear" routerLink="/registro">
+          ¿No tienes cuenta? Regístrate
+        </ion-button>
+
+        <div class="ion-text-center ion-margin-top">
+          <small>Usuario demo: <strong>admin&#64;tienda.com</strong> / Admin123!</small><br/>
+          <small>Usuario cliente: <strong>cliente&#64;tienda.com</strong> / Cliente123!</small>
+        </div>
+      </ion-card-content>
+    </ion-card>
+  </div>
+</ion-content>
