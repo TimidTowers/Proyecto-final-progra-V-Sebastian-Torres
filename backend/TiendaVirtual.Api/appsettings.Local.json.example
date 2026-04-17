@@ -1,0 +1,7 @@
+{
+  "_comment": "Copia este archivo como appsettings.Local.json (sin .example) y ajusta a tu máquina.",
+  "_comment2": "Está en .gitignore, no se sube al repo. El default en appsettings.json usa LocalDB.",
+  "ConnectionStrings": {
+    "Default": "Server=(localdb)\\MSSQLLocalDB;Database=TiendaVirtualDB;Trusted_Connection=True;TrustServerCertificate=True;MultipleActiveResultSets=true;Encrypt=False"
+  }
+}

@@ -8,6 +8,10 @@ using TiendaVirtual.Api.Services;
 
 var builder = WebApplication.CreateBuilder(args);
 
+// Override local opcional (gitignored). Permite que cada desarrollador
+// tenga su propio connection string sin afectar el repo compartido.
+builder.Configuration.AddJsonFile("appsettings.Local.json", optional: true, reloadOnChange: true);
+
 // ============================================================
 //  Servicios
 // ============================================================

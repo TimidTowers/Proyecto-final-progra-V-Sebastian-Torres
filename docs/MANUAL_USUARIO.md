@@ -113,7 +113,7 @@ ionic serve
 
 Se abrirá `http://localhost:8100` con la versión web de la app.
 
-### 3.4 App Android (opcional)
+### 3.4 App Android 
 
 ```bash
 ionic build
