@@ -1,0 +1,56 @@
+// Sección 7: Modelaje de Base de Datos (MER + SQL + Diccionario)
+const { p, h1, h2, h3, bullet, table, code } = require('./tecnico-helpers');
+
+const sec7 = [
+  h1('7. Modelaje de base de datos'),
+  h2('7.1 Modelo entidad-relación (MER)'),
+  p('La base de datos del sistema sigue un modelo relacional normalizado a tercera forma normal (3FN). A continuación se describe el modelo entidad-relación con sus 11 entidades, atributos clave y cardinalidades.'),
+  h3('7.1.1 Entidades principales'),
+  bullet('Usuario: representa a clientes y administradores del sistema.'),
+  bullet('Categoria: agrupa productos jerárquicamente; auto-relación para subcategorías.'),
+  bullet('Producto: artículo del catálogo con stock, precio y galería.'),
+  bullet('ProductoImagen: imagen perteneciente a la galería de un producto.'),
+  bullet('Carrito: contenedor de items en proceso de compra por usuario.'),
+  bullet('CarritoItem: cada producto añadido al carrito con cantidad.'),
+  bullet('Pedido: orden confirmada por un cliente.'),
+  bullet('PedidoDetalle: línea de producto dentro de un pedido.'),
+  bullet('Factura: documento fiscal emitido para cada pedido confirmado.'),
+  bullet('Cupon: código de descuento aplicable a la compra.'),
+  bullet('MovimientoInventario: registro auditado de cambios en el stock.'),
+  bullet('Direccion: dirección de envío del cliente con coordenadas geográficas.'),
+  bullet('Resena y ResenaFoto: opiniones de clientes con fotografías opcionales.'),
+  h3('7.1.2 Diagrama MER (notación textual)'),
+  code('Usuario (1) ────< (N) Direccion'),
+  code('Usuario (1) ────< (N) Pedido ────< (N) PedidoDetalle >──── (N) Producto'),
+  code('Usuario (1) ────< (1) Carrito ────< (N) CarritoItem >──── (N) Producto'),
+  code('Usuario (1) ────< (N) Resena ────< (N) ResenaFoto'),
+  code('Usuario (1) ────< (N) MovimientoInventario'),
+  code('Categoria (1) ────< (N) Producto'),
+  code('Categoria (1) ────< (N) Categoria  [auto-relación: subcategorías]'),
+  code('Producto (1) ────< (N) ProductoImagen'),
+  code('Producto (1) ────< (N) Resena'),
+  code('Pedido (1) ──── (1) Factura'),
+  code('Cupon (0..1) ──── (N) Pedido'),
+  h3('7.1.3 Cardinalidades detalladas'),
+  table(
+    ['Relación', 'Cardinalidad', 'Descripción'],
+    [
+      ['Usuario - Direccion', '1 a N', 'Un usuario tiene múltiples direcciones; una marcada como predeterminada.'],
+      ['Usuario - Pedido', '1 a N', 'Un usuario realiza múltiples pedidos.'],
+      ['Usuario - Carrito', '1 a 1', 'Cada usuario tiene un único carrito activo.'],
+      ['Usuario - Resena', '1 a N', 'Un usuario puede publicar múltiples reseñas.'],
+      ['Categoria - Producto', '1 a N', 'Cada producto pertenece a una sola categoría.'],
+      ['Categoria - Categoria', '1 a N', 'Una categoría puede ser padre de múltiples subcategorías.'],
+      ['Producto - ProductoImagen', '1 a N (máx. 5)', 'Cada producto tiene de 0 a 5 imágenes.'],
+      ['Producto - PedidoDetalle', '1 a N', 'Un producto aparece en múltiples líneas de pedido.'],
+      ['Producto - Resena', '1 a N', 'Un producto recibe múltiples reseñas.'],
+      ['Pedido - PedidoDetalle', '1 a N', 'Un pedido contiene múltiples líneas.'],
+      ['Pedido - Factura', '1 a 1', 'Cada pedido confirmado genera exactamente una factura.'],
+      ['Cupon - Pedido', '0..1 a N', 'Un cupón puede aplicarse a múltiples pedidos; un pedido usa máx. 1 cupón.'],
+      ['Resena - ResenaFoto', '1 a N (máx. 3)', 'Cada reseña admite de 0 a 3 fotografías.'],
+    ],
+    [3000, 1800, 4560]
+  ),
+];
+
+module.exports = { sec7 };

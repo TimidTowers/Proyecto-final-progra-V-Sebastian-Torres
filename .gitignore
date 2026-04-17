@@ -1,0 +1,104 @@
+# =============================================================
+# .gitignore raíz - Tienda Virtual CR
+# Cubre: .NET 9, Node/Angular/Ionic, Android, IDEs, OS
+# =============================================================
+
+# ----------------- .NET / C# -----------------
+**/bin/
+**/obj/
+*.dll
+*.exe
+*.pdb
+*.cache
+*.user
+*.suo
+*.userprefs
+*.vs/
+*.vspscc
+*.vssscc
+.vs/
+
+# Logs y artefactos de Roslyn
+*.binlog
+*.tlog
+project.assets.json
+project.nuget.cache
+
+# ----------------- Node / npm -----------------
+node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+package-lock.json.bak
+.pnp.*
+
+# ----------------- Angular / Ionic -----------------
+/dist/
+**/dist/
+.angular/
+.ionic/
+www/
+**/www/
+.sourcemaps/
+*.ngfactory.ts
+*.ngsummary.json
+
+# ----------------- Capacitor / Cordova -----------------
+plugins/
+platforms/
+
+# ----------------- Android (Gradle) -----------------
+**/android/.gradle/
+**/android/build/
+**/android/app/build/
+**/android/captures/
+**/android/local.properties
+**/android/app/release/
+**/android/app/debug/
+*.apk
+*.aab
+*.keystore
+*.jks
+key.properties
+
+# ----------------- IDEs -----------------
+.idea/
+.vscode/*
+!.vscode/settings.json
+!.vscode/extensions.json
+!.vscode/launch.json
+*.iml
+*.ipr
+*.iws
+
+# ----------------- OS -----------------
+.DS_Store
+Thumbs.db
+Desktop.ini
+ehthumbs.db
+$RECYCLE.BIN/
+
+# ----------------- Secretos / locales -----------------
+appsettings.Local.json
+appsettings.Development.local.json
+.env
+.env.local
+.env.*.local
+*.pem
+*.key
+secrets.json
+
+# ----------------- Logs y temporales -----------------
+*.log
+*.tmp
+*.bak
+*.swp
+*~
+
+# ----------------- Claude Code / agente -----------------
+.claude/scheduled_tasks.lock
+.claude/projects/
+
+# ----------------- Razor pre-comp caches -----------------
+*.razor.json
+rjsm*.cache.json
